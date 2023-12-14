@@ -114,8 +114,3 @@ def view_loans(request):
 
 
 
-def create_customer_for_existing_users():
-    existing_users = User.objects.all()
-    for user in existing_users:
-        if not hasattr(user, 'customer'):
-            customer = Customer.objects.create(user=user)
