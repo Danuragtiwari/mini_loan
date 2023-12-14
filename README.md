@@ -29,159 +29,202 @@ The Mini-Loan app allows users to request loans, view loan details, and manage r
 
    ```bash
    git clone https://github.com/Danuragtiwari/mini-loan.git
+   ```
+
 Apply migrations:
 
-bash
-Copy code
 python manage.py migrate
-Usage
+
+## Usage
+
 To start the Django development server:
 
-bash
-Copy code
+
 python manage.py runserver
+
+
 Access the app through http://localhost:8000/.
 
 Admin credentials:
 
 Username: admin
 Password: admin
-Structure
-app/: Contains the Django app files.
-models.py: Defines the database models.
-views.py: Handles the app's views and logic.
-urls.py: Manages the app's URL routing.
-templates/: Holds HTML templates for rendering views.
-Models
-Customer
-Represents a user and is associated with a Django User instance.
 
-Fields:
+#### Structure
 
-user: One-to-One relationship with Django's User model.
-Loan
-Represents a loan request.
+* app/: Contains the Django app files.
+* models.py: Defines the database models.
+* views.py: Handles the app's views and logic.
+* urls.py: Manages the app's URL routing.
+* templates/: Holds HTML templates for rendering views.
 
-Fields:
+#### Models
 
-customer: Foreign key relationship with Customer.
-amount: Decimal field to store the loan amount.
-term: Integer field to represent the loan term.
-state: Char field for the loan state (e.g., PENDING, APPROVED).
-Repayment
-Stores repayment details for loans.
+###### Customer
 
-Fields:
+    Represents a user and is associated with a Django User instance.
 
-loan: Foreign key relationship with Loan.
-amount: Decimal field for the repayment amount.
-scheduled_date: Date field for the scheduled repayment date.
-status: Char field for the repayment status (e.g., PENDING, PAID).
-Views
-add_repayment(request, loan_id)
-Description: Handles the addition of repayments for a given loan.
-Dependencies: Requires a logged-in user, uses Repayment model.
+###### Fields:
+
+    user: One-to-One relationship with Django's User model.
+
+###### Loan
+
+    Represents a loan request.
+
+###### Fields:
+
+* customer: Foreign key relationship with Customer.
+* amount: Decimal field to store the loan amount.
+* term: Integer field to represent the loan term.
+* state: Char field for the loan state (e.g., PENDING, APPROVED).
+
+###### Repayment
+
+* Stores repayment details for loans.
+
+###### Fields:
+
+* loan: Foreign key relationship with Loan.
+* amount: Decimal field for the repayment amount.
+* scheduled_date: Date field for the scheduled repayment date.
+* status: Char field for the repayment status (e.g., PENDING, PAID).
+
+## Views
+
+### add_repayment
+
+Handles the addition of repayments for a given loan.
+
+Dependencies:
+
+- Requires a logged-in user.
+- Uses Repayment model.
+
 Features:
-Processes user input for repayment amount.
-Updates repayment status and loan status accordingly.
-Redirects to the loan overview page (loan_view).
-add_repayment(request, loan_id)
-Description: Handles the addition of repayments for a given loan.
-Dependencies: Requires a logged-in user, uses Repayment model.
+
+- Processes user input for repayment amount.
+- Updates repayment status and loan status accordingly.
+- Redirects to the loan overview page (loan_view).
+
+### change_loan_status
+
+Allows staff members to change the status of a loan.
+
+Dependencies:
+
+- Requires staff privileges.
+- Uses Loan model.
+
 Features:
-Processes user input for repayment amount.
-Updates repayment status and loan status accordingly.
-Redirects to the loan overview page (loan_view).
-change_loan_status(request, loan_id)
-Description: Allows staff members to change the status of a loan.
-Dependencies: Requires staff privileges, uses Loan model.
+
+- Accepts a new status via a form.
+- Updates the loan status.
+- Redirects to the loan overview page (loan_view).
+
+### signup
+
+Handles user registration.
+
+Dependencies:
+
+- Uses Django's UserCreationForm.
+
 Features:
-Accepts a new status via a form.
-Updates the loan status.
-Redirects to the loan overview page (loan_view).
-signup(request)
-Description: Handles user registration.
-Dependencies: Uses Django's UserCreationForm.
+
+- Validates and saves new user registration.
+- Authenticates the user.
+- Redirects to the login page.
+
+### user_login
+
+Manages user login.
+
+Dependencies:
+
+- Uses Django's AuthenticationForm.
+
 Features:
-Validates and saves new user registration.
-Authenticates the user.
-Redirects to the login page.
-user_login(request)
-Description: Manages user login.
-Dependencies: Uses Django's AuthenticationForm.
+
+- Authenticates user credentials.
+- Redirects to the loan overview page (loan_view) on successful login.
+
+### user_logout
+
+Logs out the user.
+
 Features:
-Authenticates user credentials.
-Redirects to the loan overview page (loan_view) on successful login.
-user_logout(request)
-Description: Logs out the user.
+
+- De-authenticates the user.
+- Redirects to the login page.
+
+### create_loan
+
+Facilitates the creation of a new loan.
+
+Dependencies:
+
+- Requires a logged-in user.
+- Uses Loan model.
+
 Features:
-De-authenticates the user.
-Redirects to the login page.
-create_loan(request)
-Description: Facilitates the creation of a new loan.
-Dependencies: Requires a logged-in user, uses Loan model.
+
+- Processes user input for loan amount and term.
+- Creates a new loan instance.
+- Redirects to the loan overview page (loan_view).
+
+### approve_loan
+
+Allows staff members to approve a loan.
+
+Dependencies:
+
+- Requires staff privileges.
+- Uses Loan model.
+
 Features:
-Processes user input for loan amount and term.
-Creates a new loan instance.
-Redirects to the loan overview page (loan_view).
-approve_loan(request, loan_id)
-Description: Allows staff members to approve a loan.
-Dependencies: Requires staff privileges, uses Loan model.
+
+- Changes the loan status to 'APPROVED'.
+- Redirects to the loan overview page (loan_view).
+
+### view_loans
+
+Displays a list of loans based on user roles.
+
+Dependencies:
+
+- Uses Loan and Customer models.
+
 Features:
-Changes the loan status to 'APPROVED'.
-Redirects to the loan overview page (loan_view).
-view_loans(request)
-Description: Displays a list of loans based on user roles.
-Dependencies: Uses Loan and Customer models.
-Features:
-Differentiates between staff and regular users.
-Retrieves and displays relevant loan information.
-URLs
-/create_loan/
 
-View Function: create_loan
-Description: Allows users to create a new loan by providing loan amount and term.
-Name: create_loan
-/approve_loan/<int:loan_id>/
+- Differentiates between staff and regular users.
+- Retrieves and displays relevant loan information.
 
-View Function: approve_loan
-Description: Enables staff members to approve a particular loan using its ID.
-Name: approve_loan
-/change_loan_status/<int:loan_id>
+## URLs
 
-View Function: change_loan_status
-Description: Provides staff members the ability to modify the status of a specific loan.
-Name: change_loan_status
-/view_loans/
+- [/create_loan/](#create_loan)
+- [/approve_loan/](#approve_loan)[int:loan_id](int:loan_id)/
+- [/change_loan_status/](#change_loan_status)[int:loan_id](int:loan_id)/
+- [/view_loans/](#view_loans)
+- [/add_repayment/](#add_repayment)[int:loan_id](int:loan_id)/
+- [/signup/](#signup)
+- [/login/](#login)
+- [/logout/](#logout)
 
-View Function: view_loans
-Description: Displays a list of loans based on user roles.
-Name: loan_view
-/add_repayment/<int:loan_id>/
+## Authentication
 
-View Function: add_repayment
-Description: Allows users to add repayments for a specific loan using its ID.
-Name: add_repayment
-/signup/
+### User Registration (signup)
 
-View Function: signup
-Description: Handles user registration.
-Name: signup
-/login
+Allows users to register by providing necessary information and creates a new user account.
 
-View Function: user_login
-Description: Displays the login page for user authentication.
-Name: login
-/logout/
+### User Login (user_login)
 
-View Function: user_logout
-Description: Logs out the current user.
-Name: logout
-Authentication
-User Registration (signup): Allows users to register by providing necessary information and creates a new user account.
-User Login (user_login): Authenticates user credentials for logging into the system.
-User Logout (user_logout): Logs out the currently logged-in user from the system.
-Video Demonstration
-Watch the Video Demonstration
+Authenticates user credentials for logging into the system.
 
-This structure provides a starting point to explain various aspects of the Django Mini-Loan app. 
+### User Logout (user_logout)
+
+Logs out the currently logged-in user from the system.
+
+## Video Demonstration
+
+[Watch the Video Demonstration](link_to_video)
