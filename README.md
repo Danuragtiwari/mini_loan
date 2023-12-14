@@ -48,6 +48,7 @@ Access the app through http://localhost:8000/.
 Admin credentials:
 
 Username: admin
+
 Password: admin
 
 #### Structure
